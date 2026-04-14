@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="Professional image compression tool with dual control: Quality Bar + Compression Strength Bar. Reduce file size, choose output format (JPG, PNG, WebP), and preview results instantly.">
+    <meta name="keywords" content="image compression tool, reduce image size, online image compressor, image compressor for free, JPEG, PNG, WebP">
+    <meta name="author" content="SmartImageCompress">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.yourdomain.com/image-compressor-dual">
+    <title>Dual Control Compressor | Quality + Compression | Optimize Images</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f1f5f9;
+            color: #0f172a;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        header {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .navbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+        }
+        .logo a {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            text-decoration: none;
+            font-weight: 500;
+            color: #1e293b;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: #2563eb; }
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .hero {
+            text-align: center;
+            padding: 40px 0 20px;
+        }
+        .hero h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .hero p {
+            color: #475569;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .tool-card {
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
+            padding: 28px 24px;
+            margin: 24px 0 40px;
+        }
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 24px;
+            padding: 32px 20px;
+            text-align: center;
+            background: #fefefe;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 28px;
+        }
+        .upload-area:hover {
+            border-color: #3b82f6;
+            background: #f0f9ff;
+        }
+        .upload-area i {
+            font-size: 48px;
+            color: #3b82f6;
+            margin-bottom: 12px;
+        }
+        #fileInput { display: none; }
+
+        /* Quality Section (Top Bar) */
+        .quality-section {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 18px 20px;
+            margin-bottom: 24px;
+            border: 1px solid #e2e8f0;
+        }
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: linear-gradient(90deg, #dc2626, #f59e0b, #10b981);
+            border-radius: 10px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 2px solid #2563eb;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .badge-value {
+            background: #e2e8f0;
+            padding: 2px 12px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .dual-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            margin: 20px 0 20px;
+            align-items: flex-end;
+        }
+        .control-group {
+            flex: 1;
+            min-width: 160px;
+        }
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            color: #1e293b;
+        }
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+        /* Compression Strength Bar */
+        .compression-section {
+            background: #f1f5f9;
+            border-radius: 20px;
+            padding: 18px 20px;
+            margin: 16px 0 20px;
+            border-left: 4px solid #3b82f6;
+        }
+        .compression-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .strength-hint {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #475569;
+            margin-top: 6px;
+        }
+        /* Action Button Container - below compression bar */
+        .action-container {
+            margin: 24px 0 16px;
+            text-align: center;
+        }
+        .btn-compress {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: auto;
+            min-width: 240px;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+        }
+        .btn-compress:hover {
+            background: #1d4ed8;
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+        }
+        .result-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            margin-top: 32px;
+            justify-content: center;
+        }
+        .preview-box {
+            flex: 1;
+            min-width: 220px;
+            text-align: center;
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 16px;
+        }
+        .preview-box img {
+            max-width: 100%;
+            max-height: 220px;
+            border-radius: 16px;
+            object-fit: contain;
+        }
+        .info-text {
+            font-size: 0.8rem;
+            margin-top: 12px;
+            color: #475569;
+        }
+        .download-btn {
+            background: #0f172a;
+            margin-top: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            border-radius: 40px;
+            text-decoration: none;
+            color: white;
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+        .ad-container {
+            background: #f1f5f9;
+            border-radius: 20px;
+            text-align: center;
+            padding: 16px;
+            margin: 32px 0;
+            border: 1px solid #e2e8f0;
+        }
+        .ad-inner {
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffffcc;
+            border-radius: 12px;
+        }
+        .section {
+            margin: 60px 0 40px;
+        }
+        .section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 28px;
+        }
+        .grid-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 28px;
+        }
+        .feature-card, .faq-item {
+            background: white;
+            padding: 24px;
+            border-radius: 24px;
+            border: 1px solid #eef2ff;
+        }
+        .feature-card i {
+            font-size: 32px;
+            color: #2563eb;
+            margin-bottom: 16px;
+        }
+        .faq-item {
+            margin-bottom: 16px;
+            border-left: 4px solid #3b82f6;
+        }
+        footer {
+            background: #0f172a;
+            color: #cbd5e1;
+            padding: 40px 0 24px;
+            margin-top: 60px;
+        }
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+        .footer-links {
+            display: flex;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+        .footer-links a {
+            color: #e2e8f0;
+            text-decoration: none;
+        }
+        .copyright {
+            text-align: center;
+            font-size: 0.8rem;
+            border-top: 1px solid #334155;
+            padding-top: 24px;
+        }
+        @media (max-width: 760px) {
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                gap: 12px;
+                padding: 16px 0;
+            }
+            .nav-links.show { display: flex; }
+            .menu-toggle { display: block; }
+            .dual-row { flex-direction: column; }
+            .hero h1 { font-size: 1.7rem; }
+            .btn-compress { width: 100%; }
+        }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .tooltip-icon {
+            font-size: 0.7rem;
+            color: #64748b;
+            margin-left: 6px;
+            cursor: help;
+        }
+        .format-row {
+            margin: 8px 0 0;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="navbar">
+            <div class="logo"><a href="#">B&FImageCompress</a></div>
+            <div class="menu-toggle" id="mobileMenuBtn"><i class="fas fa-bars"></i></div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#how-it-works">How it works</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </div>
+    </div>
+</header>
+<main>
+    <div class="container" id="home">
+        <div class="hero">
+            <h1>IMAGE Compression + Image Strength + Quality Control</h1>
+            <p>Two independent sliders: Fine-tune <strong>compression strength</strong> (under output) and <strong>visual quality</strong> for ultimate file size reduction.</p>
+        </div>
+        <div class="ad-container">
+            <div class="ad-inner" id="ad-top">Advertisement — Replace with AdSense Unit ID</div>
+        </div>
+        <div class="tool-card">
+            <div class="upload-area" id="uploadArea">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p><strong>Click or drag & drop</strong> (JPG, PNG, WebP)</p>
+                <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp">
+            </div>
+            
+            <!-- QUALITY BAR (Top) -->
+            <div class="quality-section">
+                <div class="slider-header">
+                    <span><i class="fas fa-chart-line"></i> Visual Quality Bar</span>
+                    <span class="badge-value" id="qualityPercentBadge">80% · High</span>
+                </div>
+                <input type="range" id="qualitySlider" min="10" max="100" value="80" step="1">
+                <div style="display: flex; justify-content: space-between; font-size: 0.7rem; margin-top: 5px;">
+                    <span>📉 Lossy</span><span>⚖️ Balanced</span><span>✨ Original Fidelity</span>
+                </div>
+            </div>
+
+            <!-- Output Format Row (now separated before compression bar) -->
+            <div class="dual-row">
+                <div class="control-group">
+                    <label><i class="fas fa-file-image"></i> Output Format</label>
+                    <select id="formatSelect">
+                        <option value="original">Original (keep format)</option>
+                        <option value="image/jpeg">JPEG / JPG</option>
+                        <option value="image/png">PNG</option>
+                        <option value="image/webp">WebP (modern)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- COMPRESSION STRENGTH BAR (under output format) -->
+            <div class="compression-section">
+                <div class="compression-header">
+                    <span><i class="fas fa-tachometer-alt"></i> <strong>Compression Strength Bar</strong> <span class="tooltip-icon" title="Higher strength = more aggressive file size reduction (overrides quality for JPEG/WebP). Works like an intensity multiplier."><i class="fas fa-question-circle"></i></span></span>
+                    <span class="badge-value" id="strengthBadge">Medium (5)</span>
+                </div>
+                <input type="range" id="strengthSlider" min="1" max="10" value="5" step="1">
+                <div class="strength-hint">
+                    <span>🔽 Mild (preserve details)</span>
+                    <span>⚡ Aggressive (max size reduction)</span>
+                </div>
+                <p style="font-size: 0.7rem; margin-top: 8px; color:#475569;"><i class="fas fa-info-circle"></i> Compression strength modulates the quality setting: higher strength = lower effective quality, perfect for extreme optimization.</p>
+            </div>
+
+            <!-- ACTION BUTTON - MOVED BELOW COMPRESSION STRENGTH BAR -->
+            <div class="action-container">
+                <button id="compressBtn" class="btn-compress"><i class="fas fa-compress-alt"></i> Apply Dual Compression</button>
+            </div>
+
+            <div class="result-area" id="resultArea" style="display: none;">
+                <div class="preview-box">
+                    <h4>📸 Original</h4>
+                    <img id="originalPreview" alt="Original">
+                    <div class="info-text"><span id="originalSize"></span></div>
+                </div>
+                <div class="preview-box">
+                    <h4>⚡ Compressed <span id="dualSettingsLabel"></span></h4>
+                    <img id="compressedPreview" alt="Compressed">
+                    <div class="info-text"><span id="compressedSize"></span> · <span id="savingPercent"></span></div>
+                    <a id="downloadLink" class="download-btn" download><i class="fas fa-download"></i> Download</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="ad-container">
+            <div class="ad-inner" id="ad-mid">Advertisement — Second AdSense Slot</div>
+        </div>
+
+        <section id="how-it-works" class="section">
+            <h2>🎛️ How Dual Bars Work</h2>
+            <div class="grid-features">
+                <div class="feature-card"><i class="fas fa-chart-simple"></i><h3>Quality Bar (Top)</h3><p>Sets baseline visual fidelity from 10% to 100%. Higher = better details.</p></div>
+                <div class="feature-card"><i class="fas fa-weight-hanging"></i><h3>Compression Strength (Under Output)</h3><p>Multiplier effect: Strength 1-10. Higher strength reduces effective quality further, achieving ultra-small files.</p></div>
+                <div class="feature-card"><i class="fas fa-magic"></i><h3>Smart Formula</h3><p>Final quality = Quality Bar value / (strength factor). Strength 10 dramatically cuts size.</p></div>
+            </div>
+        </section>
+
+        <section id="features" class="section">
+            <h2>✨ Advanced Features</h2>
+            <div class="grid-features">
+                <div class="feature-card"><i class="fas fa-sliders-h"></i><h3>Two Independent Sliders</h3><p>Image Quality + Image Compression Strength = unmatched flexibility.</p></div>
+                <div class="feature-card"><i class="fas fa-chart-line"></i><h3>Real-time Preview</h3><p>See original vs compressed size and savings.</p></div>
+                <div class="feature-card"><i class="fas fa-shield-alt"></i><h3>100% Local</h3><p>No upload, private & fast.</p></div>
+                <div class="feature-card"><i class="fas fa-ad"></i><h3>AdSense Ready</h3><p>Pre-built ad containers with easy ID insertion.</p></div>
+            </div>
+        </section>
+
+        <section id="faq" class="section">
+            <h2>❓ Dual Compression FAQ</h2>
+            <div class="faq-item"><h3>What is the Compression Strength Bar?</h3><p>It's a separate control that amplifies compression. Strength 1 = mild, Strength 10 = very aggressive, giving you extra reduction beyond the quality bar.</p></div>
+            <div class="faq-item"><h3>How does it interact with Quality?</h3><p>Final quality = Quality% / (strength * 0.2 + 0.8) — dynamic mapping ensures strength dramatically lowers file size.</p></div>
+            <div class="faq-item"><h3>Which format works best?</h3><p>WebP and JPEG respond excellently to strength changes. PNG is lossless but still compresses well.</p></div>
+            <div class="faq-item"><h3>Where is the action button?</h3><p>The "Apply Dual Compression" button is now placed directly below the Compression Strength Bar for better workflow.</p></div>
+        </section>
+    </div>
+</main>
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div><strong>DualCompress</strong><br>Quality + Strength bars</div>
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#how-it-works">How it works</a>
+                <a href="#features">Features</a>
+                <a href="#faq">FAQ</a>
+            </div>
+        </div>
+        <div class="copyright">© 2025 Dual Control Compressor — Advanced image optimization tool.</div>
+    </div>
+</footer>
+
+<script>
+    // DOM references
+    const fileInput = document.getElementById('fileInput');
+    const uploadArea = document.getElementById('uploadArea');
+    const qualitySlider = document.getElementById('qualitySlider');
+    const qualityPercentBadge = document.getElementById('qualityPercentBadge');
+    const strengthSlider = document.getElementById('strengthSlider');
+    const strengthBadge = document.getElementById('strengthBadge');
+    const formatSelect = document.getElementById('formatSelect');
+    const compressBtn = document.getElementById('compressBtn');
+    const resultArea = document.getElementById('resultArea');
+    const originalPreview = document.getElementById('originalPreview');
+    const compressedPreview = document.getElementById('compressedPreview');
+    const originalSizeSpan = document.getElementById('originalSize');
+    const compressedSizeSpan = document.getElementById('compressedSize');
+    const savingPercentSpan = document.getElementById('savingPercent');
+    const downloadLink = document.getElementById('downloadLink');
+    const dualSettingsLabel = document.getElementById('dualSettingsLabel');
+
+    let currentImageFile = null;
+    let originalImageUrl = null;
+    let originalFileSize = 0;
+    let currentCompressedBlob = null;
+
+    // Update UI badges
+    function updateQualityBadge(value) {
+        let text = value >= 85 ? '📸 Excellent' : (value >= 60 ? '👍 Good' : (value >= 30 ? '⚖️ Compressed' : '📦 Tiny'));
+        qualityPercentBadge.innerHTML = `${value}% · ${text}`;
+    }
+    function updateStrengthBadge(val) {
+        let label = val <= 2 ? 'Mild' : (val <= 5 ? 'Medium' : (val <= 8 ? 'Strong' : 'Aggressive'));
+        strengthBadge.innerHTML = `${val} · ${label}`;
+    }
+    qualitySlider.addEventListener('input', (e) => updateQualityBadge(e.target.value));
+    strengthSlider.addEventListener('input', (e) => updateStrengthBadge(e.target.value));
+    updateQualityBadge(80);
+    updateStrengthBadge(5);
+
+    // Upload handlers
+    uploadArea.addEventListener('click', () => fileInput.click());
+    uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.style.borderColor = '#3b82f6'; });
+    uploadArea.addEventListener('dragleave', () => uploadArea.style.borderColor = '#cbd5e1');
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#cbd5e1';
+        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', (e) => { if (e.target.files.length) handleFile(e.target.files[0]); });
+
+    function handleFile(file) {
+        if (!file.type.match('image.*')) {
+            alert('Please select a valid image (JPEG, PNG, WebP).');
+            return;
+        }
+        currentImageFile = file;
+        originalFileSize = file.size;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            if (originalImageUrl) URL.revokeObjectURL(originalImageUrl);
+            originalImageUrl = ev.target.result;
+            originalPreview.src = originalImageUrl;
+            originalSizeSpan.innerText = formatBytes(originalFileSize);
+            resultArea.style.display = 'flex';
+            compressedPreview.src = '';
+            downloadLink.href = '#';
+            currentCompressedBlob = null;
+            if (dualSettingsLabel) dualSettingsLabel.innerText = '';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Core compression function that respects BOTH quality slider AND compression strength slider.
+    async function compressWithStrength() {
+        if (!currentImageFile) throw new Error('No image');
+        const qualityPercent = parseInt(qualitySlider.value);
+        let strength = parseInt(strengthSlider.value);
+        // strength from 1 to 10 -> factor: strength 1 = 1.0, strength 10 = 2.5+ dynamic
+        // formula: effective quality = qualityPercent / (1 + (strength-1)*0.2) , max divisor ~2.8
+        let divisor = 1 + ((strength - 1) * 0.2);
+        let effectiveQuality = qualityPercent / divisor;
+        effectiveQuality = Math.min(100, Math.max(5, effectiveQuality)); // clamp between 5% and 100%
+        const finalQuality = effectiveQuality / 100;
+        
+        let outputMime = formatSelect.value;
+        if (outputMime === 'original') {
+            outputMime = currentImageFile.type;
+            if (!['image/jpeg','image/png','image/webp'].includes(outputMime)) outputMime = 'image/jpeg';
+        }
+        
+        const img = await loadImageElement(originalImageUrl);
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        
+        let blob;
+        if (outputMime === 'image/png') {
+            blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        } else if (outputMime === 'image/webp') {
+            blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', finalQuality));
+        } else {
+            blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', finalQuality));
+        }
+        return { blob, finalQualityPercent: Math.round(effectiveQuality), strength, qualityOriginal: qualityPercent };
+    }
+
+    compressBtn.addEventListener('click', async () => {
+        if (!currentImageFile) {
+            alert('Please upload an image first.');
+            return;
+        }
+        compressBtn.disabled = true;
+        compressBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Applying bars...';
+        try {
+            const { blob, finalQualityPercent, strength, qualityOriginal } = await compressWithStrength();
+            if (!blob) throw new Error('Compression failed');
+            currentCompressedBlob = blob;
+            const compressedURL = URL.createObjectURL(blob);
+            compressedPreview.src = compressedURL;
+            const compressedSize = blob.size;
+            compressedSizeSpan.innerText = formatBytes(compressedSize);
+            const savedPercent = ((originalFileSize - compressedSize) / originalFileSize * 100).toFixed(1);
+            savingPercentSpan.innerText = `⬇️ Saved ${savedPercent}%`;
+            dualSettingsLabel.innerHTML = `(Q:${qualityOriginal}% | Str:${strength} → eff.${finalQualityPercent}%)`;
+            
+            let ext = 'jpg';
+            let outMime = formatSelect.value;
+            if (outMime === 'original') outMime = currentImageFile.type;
+            if (outMime === 'image/png') ext = 'png';
+            else if (outMime === 'image/webp') ext = 'webp';
+            else ext = 'jpg';
+            const fileName = `dual_compressed_q${qualityOriginal}_s${strength}.${ext}`;
+            downloadLink.href = compressedURL;
+            downloadLink.download = fileName;
+            if (window._lastUrl) URL.revokeObjectURL(window._lastUrl);
+            window._lastUrl = compressedURL;
+        } catch (err) {
+            console.error(err);
+            alert('Compression error. Try another image or lower strength.');
+        } finally {
+            compressBtn.disabled = false;
+            compressBtn.innerHTML = '<i class="fas fa-compress-alt"></i> Apply Dual Compression';
+        }
+    });
+
+    function loadImageElement(src) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = reject;
+            img.src = src;
+        });
+    }
+    function formatBytes(bytes) {
+        if (!bytes) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+
+    // Mobile menu
+    const mobileBtn = document.getElementById('mobileMenuBtn');
+    const navLinks = document.getElementById('navLinks');
+    mobileBtn.addEventListener('click', () => navLinks.classList.toggle('show'));
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth' });
+                navLinks.classList.remove('show');
+            }
+        });
+    });
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Dual Control Image Compressor",
+  "description": "Compress images using Quality Bar and Compression Strength Bar. Supports JPG, PNG, WebP with real-time preview.",
+  "applicationCategory": "Multimedia",
+  "featureList": "Quality slider, Compression strength slider, format conversion, client-side"
+}
+</script>
+</body>
+</html>
